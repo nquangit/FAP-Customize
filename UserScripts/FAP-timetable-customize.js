@@ -2,7 +2,7 @@
 // @name         FAP timetable
 // @namespace    http://tampermonkey.net/
 // @version      2024-05-02
-// @description  FAP timetable
+// @description  try to take over the world!
 // @author       You
 // @match        https://fap.fpt.edu.vn/Report/ScheduleOfWeek.aspx*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=edu.vn
@@ -60,7 +60,7 @@
             "attended": "#dcf5e3",
             "absent": "rgba(255, 23, 68, .8)"
         };
-        console.log(status);
+        // console.log(status);
         return attendance_color[status];
     }
 
@@ -90,7 +90,7 @@
             // console.log("Time:", time);
 
             // Remove padding
-            lessons[i].style.padding = "2px";
+            lessons[i].style.padding = "3px";
 
             // Fill background color
 
@@ -98,7 +98,7 @@
             // Change the structure
             var lessonDetailsHTML = `
                 <div class="lesson-container" style="background: ${mark_attandance(lessons[i], status)};">
-                    <p class="activity-link">${activity_name}</p>
+                    <p data-link="${activity_link.getAttribute('href')}" class="activity-link">${activity_name}</p>
                     <p class="class-room label label-danger">${classroom}</p>
                     <p class="lesson-time label label-success">${time}</p>
                     <a href="${material_link}" class="material-link label label-primary">Material</a>
@@ -111,15 +111,18 @@
             lessonDetailsHTML += `</div>`;
 
             // Click the lesson to go the the activity link
-            lessons[i].addEventListener('click', function() {
+            lessons[i].addEventListener('click', function(event) {
+                var clickedElement = event.target;
+                var activity_link_element = clickedElement.querySelector("p.activity-link");
+                var activity_href = activity_link_element.getAttribute('data-link');
                 // Navigate to a URL when the lesson-container is clicked
-                window.location.href = activity_link.getAttribute('href');
+                window.location.href = activity_href;
             });
 
             lessons[i].innerHTML = lessonDetailsHTML;
         }
         // Create a <style> element
-            var styleElement = document.createElement('style');
+        var styleElement = document.createElement('style');
 
         // Define your CSS code
         var cssCode = `
@@ -220,6 +223,7 @@
                     position: relative;
                     padding: 10px 10px 30px 10px;
                     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+                    border-radius: 10px
                 }
                 .lesson-container:hover {
                     cursor: pointer;
